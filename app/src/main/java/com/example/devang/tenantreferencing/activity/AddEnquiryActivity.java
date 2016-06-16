@@ -42,7 +42,6 @@ public class AddEnquiryActivity extends AppCompatActivity {
     Spinner spinnerProduct;
     Spinner spinnerTenancyTerm;
 
-
     Button btnDate;
     Button btnSubmit;
     private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
@@ -58,10 +57,10 @@ public class AddEnquiryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         Log.d("Test", "Application Started");
         setContentView(R.layout.activity_add_enquiry);
+
+
 
         /* creating database instance */
         addEnquiryDAO = new AddEnquiryDAO(this);
@@ -78,7 +77,7 @@ public class AddEnquiryActivity extends AppCompatActivity {
         productDAO = new ProductDAO(this);
         ArrayList<String> listProduct = productDAO.getProduct();
         spinnerProduct = (Spinner) findViewById(R.id.spinnerProduct);
-        ArrayAdapter<String> adapterProduct = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, listProduct);
+        ArrayAdapter<String> adapterProduct = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listProduct);
         spinnerProduct.setAdapter(adapterProduct);
         /* filling PRODUCT spinner from database end*/
 
@@ -101,6 +100,58 @@ public class AddEnquiryActivity extends AppCompatActivity {
         dayX = calendar.get(Calendar.DAY_OF_MONTH);
         showTenancyStartDateDialog();
         /* Date Picker Ends */
+
+
+        /* Validation start */
+
+        editNumberOfTenants = (EditText) findViewById(R.id.editTextNumberOfTenants);
+        editNumberOfTenants.requestFocus();
+        editNumberOfTenants.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editNumberOfTenants.getText().length() == 0)
+                    editNumberOfTenants.setError("Enter No of Tenants");
+            }
+        });
+
+        editAddress1 = (EditText) findViewById(R.id.editTextAddress1);
+        editAddress1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editAddress1.getText().length() == 0)
+                    editAddress1.setError("Enter address");
+            }
+        });
+
+        editAddress2 = (EditText) findViewById(R.id.editTextAddress2);
+        editAddress2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editAddress2.getText().length() == 0)
+                    editAddress2.setError("Enter address");
+            }
+        });
+
+        editTown = (EditText) findViewById(R.id.editTextTown);
+        editTown.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editTown.getText().length() == 0)
+                    editTown.setError("Enter town");
+            }
+        });
+
+        editPostcode = (EditText) findViewById(R.id.editTextPostcode);
+        editPostcode.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (editPostcode.getText().length() == 0)
+                    editPostcode.setError("Enter postcode");
+            }
+        });
+
+        /* Validation end*/
+
 
         /* On SUBMIT, data insertion */
         addData();
@@ -127,6 +178,51 @@ public class AddEnquiryActivity extends AppCompatActivity {
         return null;
     }
 
+
+    public boolean validation(String editNumberOfTenants, String editAddress1,
+                              String editAddress2, String editTown, String editPostcode) {
+
+        boolean isValidated = true;
+
+
+        if (editNumberOfTenants.length() == 0) {
+            isValidated = false;
+            Toast.makeText(AddEnquiryActivity.this, "Enter no. of tenants !!", Toast.LENGTH_LONG).show();
+        } else if (isValidated) {
+            try {
+                Long.parseLong(editNumberOfTenants);
+            } catch (NumberFormatException e) {
+                isValidated = false;
+                Toast.makeText(AddEnquiryActivity.this, "No. of tenants must be numeric !!", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        } else if (isValidated) {
+            if (editAddress1.length() == 0) {
+                isValidated = false;
+                Toast.makeText(AddEnquiryActivity.this, "Enter address !!", Toast.LENGTH_LONG).show();
+            }
+        } else if (isValidated) {
+            if (editAddress2.length() == 0) {
+                isValidated = false;
+                Toast.makeText(AddEnquiryActivity.this, "Enter address !!", Toast.LENGTH_LONG).show();
+            }
+        } else if (isValidated) {
+            if (editTown.length() == 0) {
+                isValidated = false;
+                Toast.makeText(AddEnquiryActivity.this, "Enter Town !!", Toast.LENGTH_LONG).show();
+            }
+        } else if (isValidated) {
+            if (editPostcode.length() == 0) {
+                isValidated = false;
+                Toast.makeText(AddEnquiryActivity.this, "Enter postcode !!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        isValidated = false;
+        return isValidated;
+    }
+
+
     public void addData() {
         btnSubmit = (Button) findViewById(R.id.buttonSubmit);
         btnSubmit.setOnClickListener(
@@ -134,16 +230,32 @@ public class AddEnquiryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        editNumberOfTenants = (EditText) findViewById(R.id.editTextNumberOfTenants);
-                        editAddress1 = (EditText) findViewById(R.id.editTextAddress1);
-                        editAddress2 = (EditText) findViewById(R.id.editTextAddress2);
-                        editTown = (EditText) findViewById(R.id.editTextTown);
-                        editPostcode = (EditText) findViewById(R.id.editTextPostcode);
+                        String noOfTenants = ((EditText) findViewById(R.id.editTextNumberOfTenants)).getText().toString();
+                        String address1 = ((EditText) findViewById(R.id.editTextAddress1)).getText().toString();
+                        String address2 = ((EditText) findViewById(R.id.editTextAddress2)).getText().toString();
+                        String town = ((EditText) findViewById(R.id.editTextTown)).getText().toString();
+                        String postcode = ((EditText) findViewById(R.id.editTextPostcode)).getText().toString();
+                        boolean isValidated = validation(noOfTenants, address1, address2, town, postcode);
+                        if (isValidated == false) {
+                            return;
+                        }
+
                         String date = yearX + "-" + monthX + "-" + dayX;
+                        long tenants = 0;
+                        try {
+                            tenants = Long.parseLong(editNumberOfTenants.getText().toString());
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(AddEnquiryActivity.this, "Only Numeric Allowed", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                            return;
+                        } finally {
+                        }
+
+
                         Enquiry enquiry;
                         try {
                             enquiry = addEnquiryDAO.insertEnquiry(
-                                    Long.parseLong(editNumberOfTenants.getText().toString()),
+                                    tenants,
                                     editAddress1.getText().toString(),
                                     editAddress2.getText().toString(),
                                     editTown.getText().toString(),
@@ -158,10 +270,6 @@ public class AddEnquiryActivity extends AppCompatActivity {
                             Toast.makeText(AddEnquiryActivity.this, "Data not Inserted", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
-//                        if (isInserted == true)
-//                            Toast.makeText(AddEnquiryActivity.this, "Data Inserted", Toast.LENGTH_LONG).show();
-//                        else
-//                            Toast.makeText(AddEnquiryActivity.this, "Data not Inserted", Toast.LENGTH_LONG).show();
                     }
                 }
         );
