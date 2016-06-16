@@ -16,8 +16,8 @@ import android.widget.Toast;
 import com.example.devang.tenantreferencing.R;
 import com.example.devang.tenantreferencing.database.AddEnquiryDAO;
 import com.example.devang.tenantreferencing.database.CountryDAO;
-import com.example.devang.tenantreferencing.database.DbHelper;
 import com.example.devang.tenantreferencing.database.ProductDAO;
+import com.example.devang.tenantreferencing.database.TenancyTermDAO;
 import com.example.devang.tenantreferencing.model.Enquiry;
 
 import java.util.ArrayList;
@@ -30,7 +30,8 @@ public class AddEnquiryActivity extends AppCompatActivity {
     AddEnquiryDAO addEnquiryDAO;
     CountryDAO countryDAO;
     ProductDAO productDAO;
-    //CountryDAO countryDAO;
+    TenancyTermDAO tenancyTermDAO;
+
 
     EditText editNumberOfTenants;
     EditText editAddress1;
@@ -39,18 +40,27 @@ public class AddEnquiryActivity extends AppCompatActivity {
     EditText editPostcode;
     Spinner spinnerCountry;
     Spinner spinnerProduct;
-//    Spinner spinnerTenancyTerm = (Spinner) findViewById(R.id.spinnerTenancyTerm);
+    Spinner spinnerTenancyTerm;
 
 
     Button btnDate;
     Button btnSubmit;
+    private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            yearX = year;
+            monthX = monthOfYear + 1;
+            dayX = dayOfMonth;
+            Toast.makeText(AddEnquiryActivity.this, yearX + "/" + monthX + "/" + dayX, Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        Log.d("Test","Application Started");
+        Log.d("Test", "Application Started");
         setContentView(R.layout.activity_add_enquiry);
 
         /* creating database instance */
@@ -60,17 +70,25 @@ public class AddEnquiryActivity extends AppCompatActivity {
         countryDAO = new CountryDAO(this);
         ArrayList<String> listCountry = countryDAO.getCountry();
         spinnerCountry = (Spinner) findViewById(R.id.spinnerCountry);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item,listCountry);
-        spinnerCountry.setAdapter(adapter);
+        ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listCountry);
+        spinnerCountry.setAdapter(adapterCountry);
         /* filling COUNTRY spinner from database end*/
 
         /* filling PRODUCT spinner from database*/
-        countryDAO = new CountryDAO(this);
-        ArrayList<String> listProduct = countryDAO.getCountry();
+        productDAO = new ProductDAO(this);
+        ArrayList<String> listProduct = productDAO.getProduct();
         spinnerProduct = (Spinner) findViewById(R.id.spinnerProduct);
-        ArrayAdapter<String> adapterProduct = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item,listCountry);
-        spinnerCountry.setAdapter(adapterProduct);
+        ArrayAdapter<String> adapterProduct = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, listProduct);
+        spinnerProduct.setAdapter(adapterProduct);
         /* filling PRODUCT spinner from database end*/
+
+        /* filling TENANCYTERM spinner from database*/
+        tenancyTermDAO = new TenancyTermDAO(this);
+        ArrayList<String> listTenancyTerm = tenancyTermDAO.getTenancyTerm();
+        spinnerTenancyTerm = (Spinner) findViewById(R.id.spinnerTenancyTerm);
+        ArrayAdapter<String> adapterTenancyTerm = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, listTenancyTerm);
+        spinnerTenancyTerm.setAdapter(adapterTenancyTerm);
+        /* filling TENANCYTERM spinner from database end*/
 
 
 
@@ -103,21 +121,11 @@ public class AddEnquiryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected Dialog onCreateDialog(int id){
-        if(id == dialogID)
+    protected Dialog onCreateDialog(int id) {
+        if (id == dialogID)
             return new DatePickerDialog(this, dPickerListener, yearX, monthX, dayX);
         return null;
     }
-
-    private DatePickerDialog.OnDateSetListener dPickerListener = new DatePickerDialog.OnDateSetListener(){
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-            yearX = year;
-            monthX = monthOfYear + 1;
-            dayX = dayOfMonth;
-            Toast.makeText(AddEnquiryActivity.this, yearX + "/" + monthX + "/" + dayX, Toast.LENGTH_LONG).show();
-        }
-    };
 
     public void addData() {
         btnSubmit = (Button) findViewById(R.id.buttonSubmit);
@@ -131,7 +139,7 @@ public class AddEnquiryActivity extends AppCompatActivity {
                         editAddress2 = (EditText) findViewById(R.id.editTextAddress2);
                         editTown = (EditText) findViewById(R.id.editTextTown);
                         editPostcode = (EditText) findViewById(R.id.editTextPostcode);
-                        String date = yearX + "-" + monthX  + "-" + dayX;
+                        String date = yearX + "-" + monthX + "-" + dayX;
                         Enquiry enquiry;
                         try {
                             enquiry = addEnquiryDAO.insertEnquiry(
@@ -145,7 +153,7 @@ public class AddEnquiryActivity extends AppCompatActivity {
                                     1,
                                     1
                             );
-                            Toast.makeText(AddEnquiryActivity.this, "Data Inserted, id = " + enquiry.getmId() +  "", Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddEnquiryActivity.this, "Data Inserted, id = " + enquiry.getmId() + "", Toast.LENGTH_LONG).show();
                         } catch (Exception e) {
                             Toast.makeText(AddEnquiryActivity.this, "Data not Inserted", Toast.LENGTH_LONG).show();
                             e.printStackTrace();

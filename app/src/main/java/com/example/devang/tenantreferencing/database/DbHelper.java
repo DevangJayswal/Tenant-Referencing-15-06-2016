@@ -1,14 +1,10 @@
 package com.example.devang.tenantreferencing.database;
 
-import android.content.ContentValues;
+
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.example.devang.tenantreferencing.model.Country;
 
 /**
  * Created by Devang on 6/8/2016.
@@ -102,24 +98,25 @@ public class DbHelper extends SQLiteOpenHelper {
         /* Creating Table end */
 
         /* Country Insertion */
-        String country[] = {"India", "Pakistan", "Canada", "USA", "Cyprus", "UK"};
+        String country[] = {"India", "Pakistan", "Canada", "USA", "Cyprus", "UK","China"};
         for (int i = 0; i < country.length; ++i) {
             db.execSQL("INSERT INTO " + tableCountry + " (name) values ('" + country[i] + "')");
         }
         /* Country Insertion end */
 
         /* Product Insertion */
-        String product[] = {"Product 1", "Product 2", "Product 3", "Product 4"};
+        String product[] = {"Product 1", "Product 2", "Product 3", "Product 4", "Product 5", "Product 6"};
         for (int i = 0; i < product.length; ++i) {
             db.execSQL("INSERT INTO " + tableProduct + " (name) values ('" + product[i] + "')");
         }
         /* Product Insertion end */
 
         /* TenancyTerm Insertion */
-        String tenancyTerm[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        String tenancyTerm[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         for (int i = 0; i < tenancyTerm.length; ++i) {
             db.execSQL("INSERT INTO " + tableTenancyTerm + " (name) values ('" + tenancyTerm[i] + "')");
         }
+
         /* TenancyTerm Insertion end */
 
     }
@@ -133,13 +130,8 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + tableCountry);
         db.execSQL("DROP TABLE IF EXISTS " + tableProduct);
         db.execSQL("DROP TABLE IF EXISTS " + tableTenancyTerm);
-
-
-
         // recreate the tables
         onCreate(db);
-
-
     }
 
 

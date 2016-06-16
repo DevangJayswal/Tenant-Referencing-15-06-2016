@@ -5,10 +5,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import com.example.devang.tenantreferencing.model.Country;
-import com.example.devang.tenantreferencing.model.Product;
-
 import java.util.ArrayList;
 
 /**
@@ -20,9 +16,6 @@ public class ProductDAO {
     private SQLiteDatabase mDatabase;
     private DbHelper mDbHelper;
     private Context mContext;
-    private String[] mAllColumns = {DbHelper.colCountryCountryID,
-            DbHelper.colCountryName};
-
 
     public ProductDAO(Context context) {
         this.mContext = context;

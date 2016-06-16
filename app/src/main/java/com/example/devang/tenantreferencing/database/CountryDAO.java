@@ -42,29 +42,15 @@ public class CountryDAO {
         mDatabase = mDbHelper.getWritableDatabase();
     }
 
-    public Country insertCountry(String countryName) {
-        ContentValues values = new ContentValues();
-        values.put(DbHelper.colCountryName, countryName);
-        long insertId = mDatabase
-                .insert(DbHelper.tableCountry, null, values);
-        Cursor cursor = mDatabase.query(DbHelper.tableCountry, mAllColumns,
-                DbHelper.colCountryCountryID + " = " + insertId, null, null,
-                null, null);
-        cursor.moveToFirst();
-        Country newCountry = cursorToCountry(cursor);
-        cursor.close();
-        return newCountry;
-    }
-
-    public ArrayList<String> getCountry(){
-        ArrayList<String> list  = new ArrayList<String>();
+    public ArrayList<String> getCountry() {
+        ArrayList<String> list = new ArrayList<String>();
         mDatabase = mDbHelper.getReadableDatabase();
         mDatabase.beginTransaction();
         try {
-            String selectQuery = "SELECT * FROM "+ DbHelper.tableCountry +"";
+            String selectQuery = "SELECT * FROM " + DbHelper.tableCountry + "";
             Cursor cursor = mDatabase.rawQuery(selectQuery, null);
-            if(cursor.getCount()>0){
-                while (cursor.moveToNext()){
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
                     String countryName = cursor.getString(1);
                     list.add(countryName);
                 }
@@ -79,12 +65,5 @@ public class CountryDAO {
         return list;
     }
 
-
-    protected Country cursorToCountry(Cursor cursor) {
-        Country country = new Country();
-        country.setId(cursor.getLong(0));
-        country.setName(cursor.getString(1));
-        return country;
-    }
 
 }
